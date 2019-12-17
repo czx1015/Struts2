@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+	<!-- 引入db.properties文件 以便下面通过${key}方式来引用db.properties文件中的相对应的值 -->
+	<properties resource="db.properties"/>
+	
+	<!-- 设置多个别名 用包名 会自动将该包内的所有类设置别名 别名就是类名 -->
+    <typeAliases>
+      <package name="cn.entity"/>
+    </typeAliases>
+    
+    
+    <!-- 通过environments的default值 和 environment的id来指定MyBatis运行时的数据库环境 -->
+    <environments default="development">
+    
+    	<!-- 开发环境（自己电脑） （可写多个开发环境，自己电脑或者公司的测试电脑） -->
+        <environment id="development">
+        
+        	<!-- 事务提交方式
+        		JDBC：利用JDBC方式处理事务
+        		MANAGMD:将事务交由其他组件（Spring）去托管
+        	 -->
+            <transactionManager type="JDBC"/>
+            
+            <!-- 数据源类型
+            	 POOLED：使用数据库连接池，不用每次访问数据库都需要打开和关闭，只需要在数据库连接池中借还数据库连接
+            	 UNPOOLED:传统的JDBC模式，也就是每次访问数据库都是自己去打开和关闭数据库
+            	 JNDI：从tomcat中获取一个内置的数据库连接池
+             -->
+            <dataSource type="POOLED">
+            
+            	<!-- 通过${key}方式从db.properties文件中取相对应的值 -->
+                <property name="driver" value="${driver}"/>
+                <property name="url" value="${url}"/>
+                <property name="username" value="${username}"/>
+                <property name="password" value="${password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+   	<mappers>
+		<mapper resource="cn/dao/TypeDaoMapper.xml"/>
+		<mapper resource="cn/dao/UserDaoMapper.xml"/>
+		<mapper resource="cn/dao/OrderDaoMapper.xml"/>
+		<mapper resource="cn/dao/CollectDaoMapper.xml"/>
+	</mappers>
+</configuration>

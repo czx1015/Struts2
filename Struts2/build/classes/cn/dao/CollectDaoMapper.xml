@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.dao.CollectDao">
+<!-- 添加收藏 -->
+	<insert id="addCollect" parameterType="Collect">
+		insert into tb_collect values(#{ty_id},#{me_id},#{us_id},#{imageFileName},#{ty_name},#{price},#{introduction},#{date})
+	</insert>
+	<!-- 查询所有用户收藏的商品  -->
+	<select id="selectCollect" resultType="Collect">
+	SELECT * FROM tb_collect ORDER BY DATE DESC
+	</select>
+	<!-- 查询该用户是否已收藏该商品 -->
+	<select id="exist" resultType="Collect">
+	SELECT * FROM tb_collect where us_id=#{us_id} and ty_id=#{ty_id}
+	</select>
+	<!-- 根据用户ID和商品id删除相应的收藏 -->
+	<delete id="deleteCollect" parameterType="Collect">
+		delete  from tb_collect where us_id = #{us_id} and ty_id = #{ty_id} 
+	</delete>
+	<!-- 根据用户id查询该用户的收藏 -->
+	<select id="selectMyCollect"  parameterType="int" resultType="Collect">
+	SELECT * FROM tb_collect WHERE us_id = #{us_id} OR me_id = #{me_id}
+	ORDER BY DATE DESC
+	</select>
+</mapper>

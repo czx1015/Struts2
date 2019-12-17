@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+    <constant name="struts.custom.il8n.resources" value="validation"></constant>
+	<package name="type" namespace="/" extends="struts-default">
+		<interceptors>
+			<interceptor name="loginInterceptor" class="cn.Interceptor.LoginInterceptor"/>
+			<interceptor-stack name="MyStack">
+				<interceptor-ref name="loginInterceptor">
+					<param name="excludeMethods">login,register,ajax,yanzhengma</param>
+				</interceptor-ref>
+				<interceptor-ref name="defaultStack"/>
+			</interceptor-stack>
+		</interceptors>
+		<default-interceptor-ref name="MyStack"/>
+		<global-results>
+			<result name="login" type="redirect">/login.jsp</result>
+		</global-results>	
+		<!-- 查询所有的商品信息，跳转到商品管理页 -->
+		<action name="selectTypes" class="cn.action.TypeAction" method="selectTypes">
+			<result>/admin/type.jsp</result>
+		</action>
+		<!-- 根据商家id查询该商家所有的商品信息，跳转到商品管理页 -->
+		<action name="selectMerchantsTypes" class="cn.action.TypeAction" method="selectMerchantsTypes">
+			<result>/merchants/type.jsp</result>
+		</action>
+		<!-- 根据id删除该商品，跳转到商品管理页 -->
+		<action name="admindeleteType" class="cn.action.TypeAction" method="deleteType">
+			<result type="redirect">selectTypes.action</result>
+		</action>
+		<action name="deleteType" class="cn.action.TypeAction" method="deleteType">
+			<result type="redirect">selectMerchantsTypes.action?id=${id}</result>
+		</action>
+		<!-- 修改，根据id查询改商品信息，跳转到商品信息修改页 -->
+		<action name="adminselectType" class="cn.action.TypeAction" method="selectType">
+			<result>/admin/updateType.jsp</result>
+		</action>
+		<action name="selectType" class="cn.action.TypeAction" method="selectType">
+			<result>/merchants/updateType.jsp</result>
+		</action>
+		<!-- 入库，根据id查询该商品信息，跳转到入库页 -->
+		<action name="up" class="cn.action.TypeAction" method="selectType">
+			<result>/merchants/stockUp.jsp</result>
+		</action>
+		<action name="adminup" class="cn.action.TypeAction" method="selectType">
+			<result>/admin/stockUp.jsp</result>
+		</action>
+		<!-- 出库，根据id查询该商品信息，跳转到出库页 -->
+		<action name="out" class="cn.action.TypeAction" method="selectType">
+			<result>/merchants/shippingOut.jsp</result>
+		</action>
+		<action name="adminout" class="cn.action.TypeAction" method="selectType">
+			<result>/admin/shippingOut.jsp</result>
+		</action>
+		<!--根据商品id查询商品信息和店铺信息，跳转到详情页  -->
+		<action name="admindetails" class="cn.action.TypeAction" method="selectUserType">
+			<result>/admin/details.jsp</result>
+		</action>
+		<action name="merchantsdetails" class="cn.action.TypeAction" method="selectUserType">
+			<result>/merchants/details.jsp</result>
+		</action>
+		<action name="clientsdetails" class="cn.action.TypeAction" method="selectUserType">
+			<result>/clients/details.jsp</result>
+		</action>
+		<!--根据id修改商品信息，跳转到商品管理页  -->
+		<action name="adminupdateType" class="cn.action.TypeAction" method="updateType">
+			<result type="redirect">selectTypes.action</result>
+		</action>
+		<action name="updateType" class="cn.action.TypeAction" method="updateType">
+			<result type="redirect">selectMerchantsTypes.action?id=${id}</result>
+		</action>
+		<!-- 添加商品，跳转回商品管理页 -->
+		<action name="adminaddType" class="cn.action.TypeAction" method="addType">
+			<result name="type" type="redirect">selectTypes.action</result>
+		</action>
+		<action name="addType" class="cn.action.TypeAction" method="addType">
+			<result name="type" type="redirect">selectMerchantsTypes.action?id=${id}</result>
+		</action>
+		<!-- 根据输入的字符串去查询相应的商品，跳转到搜索页 -->
+		<action name="adminsearch" class="cn.action.TypeAction" method="search">
+			<result>/admin/search.jsp</result>
+		</action>
+		<action name="clientssearch" class="cn.action.TypeAction" method="search">
+			<result>/clients/search.jsp</result>
+		</action>
+		<action name="search" class="cn.action.TypeAction" method="search">
+			<result>/merchants/search.jsp</result>
+		</action>
+	</package>
+</struts>

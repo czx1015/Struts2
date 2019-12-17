@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+    <constant name="struts.custom.il8n.resources" value="validation"></constant>
+	<package name="order" namespace="/" extends="struts-default">	
+	 <interceptors>
+			<interceptor name="loginInterceptor" class="cn.Interceptor.LoginInterceptor"/>
+			<interceptor-stack name="MyStack">
+				<interceptor-ref name="loginInterceptor">
+					<param name="excludeMethods">login,register,ajax,yanzhengma</param>
+				</interceptor-ref>
+				<interceptor-ref name="defaultStack"/>
+			</interceptor-stack>
+		</interceptors>
+		<default-interceptor-ref name="MyStack"/>
+		<global-results>
+			<result name="login" type="redirect">/login.jsp</result>
+		</global-results>	
+		<!-- 查询所需要购买的该商品的详细信息，跳转到提交订单页 -->
+	    <action name="adminbuyData" class="cn.action.OrderAction" method="buyData">
+			<result>/admin/order.jsp</result>
+		</action>
+		<action name="merchantsbuyData" class="cn.action.OrderAction" method="buyData">
+			<result>/merchants/order.jsp</result>
+		</action>
+		<action name="clientsbuyData" class="cn.action.OrderAction" method="buyData">
+			<result>/clients/order.jsp</result>
+		</action>
+		<action name="adminorder" class="cn.action.OrderAction" method="order">
+			<result>/admin/zhifu.jsp</result>
+		</action>
+		<action name="clientsorder" class="cn.action.OrderAction" method="order">
+			<result>/clients/zhifu.jsp</result>
+		</action>
+		<action name="order" class="cn.action.OrderAction" method="order">
+			<result>/merchants/zhifu.jsp</result>
+		</action>
+		<!-- 提交订单，出库，跳转到商品详情页 -->
+		<action name="adminsubmitOrder" class="cn.action.OrderAction" method="submitOrder">
+			<result type="redirect">admindetails.action?id=${id}</result>
+		</action>
+		<action name="merchantssubmitOrder" class="cn.action.OrderAction" method="submitOrder">
+			<result type="redirect">merchantsdetails.action?id=${id}</result>
+		</action>
+		<action name="clientssubmitOrder" class="cn.action.OrderAction" method="submitOrder">
+			<result type="redirect">clientsdetails.action?id=${id}</result>
+		</action>
+		<!-- 入库，增加相应的商品数量，跳转到商品管理页 -->
+		<action name="adminupOrder" class="cn.action.OrderAction" method="submitOrder">
+			<result type="redirect">selectTypes.action</result>
+		</action>
+		<action name="upOrder" class="cn.action.OrderAction" method="submitOrder">
+			<result type="redirect">selectMerchantsTypes.action?id=${id}</result>
+		</action>
+		<!--出库，，减少相应的商品数量，跳转到商品管理页  -->
+		<action name="adminoutOrder" class="cn.action.OrderAction" method="submitOrder">
+			<result type="redirect">selectTypes.action</result>
+		</action>
+		<action name="outOrder" class="cn.action.OrderAction" method="submitOrder">
+			<result type="redirect">selectMerchantsTypes.action?id=${id}</result>
+		</action>
+		<!-- 查询所有的订单信息，跳转到订单管理页 -->
+		<action name="selectOrders" class="cn.action.OrderAction" method="selectOrders">
+			<result>/admin/orderForm.jsp</result>
+		</action>
+		<!-- 删除订单 -->
+		<action name="admindeleteOrdert" class="cn.action.OrderAction" method="deleteOrdert">
+		<result type="redirect">selectOrders.action</result>		
+		</action>
+		<action name="deleteOrdert" class="cn.action.OrderAction" method="deleteOrdert">
+		<result type="redirect">selectTypeOrders.action?id=${id}</result>		
+		</action>
+		<action name="clientsdeleteOrdert" class="cn.action.OrderAction" method="deleteOrdert">
+		<result type="redirect">clientsselectTypeOrders.action?id=${id}</result>		
+		</action>
+		<!-- 根据用户id查询该用户的订单信息，跳转到订单管理页 -->
+		<action name="selectTypeOrders" class="cn.action.OrderAction" method="selectTypeOrders">
+			<result>/merchants/orderForm.jsp</result>
+		</action>
+		<action name="clientsselectTypeOrders" class="cn.action.OrderAction" method="selectTypeOrders">
+			<result>/clients/orderForm.jsp</result>
+		</action>
+		<!-- 根据商家id，查询该商家的出入库信息，跳转到库房管理页 -->
+		<action name="storerooms" class="cn.action.OrderAction" method="storerooms">
+			<result>/merchants/storerooms.jsp</result>
+		</action>
+		<!-- 查询所有的出入库信息，跳转到库房管理页 -->
+		<action name="adminstorerooms" class="cn.action.OrderAction" method="adminstorerooms">
+			<result>/admin/storerooms.jsp</result>
+		</action>
+		<!-- 根据商家id，对该商家的出入库信息进行统计，跳转到库房统计页 -->
+		<action name="statistics" class="cn.action.OrderAction" method="statistics">
+			<result>/merchants/statistics.jsp</result>
+		</action>
+		<!--对所有的出入库信息进行统计，跳转到库房统计页  -->
+		<action name="adminstatistics" class="cn.action.OrderAction" method="adminstatistics">
+			<result>/admin/statistics.jsp</result>
+		</action>
+	</package>
+</struts>

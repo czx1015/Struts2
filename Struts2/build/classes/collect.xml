@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+    <constant name="struts.custom.il8n.resources" value="validation"></constant>
+	<package name="collect" namespace="/" extends="struts-default">	
+	 <interceptors>
+			<interceptor name="loginInterceptor" class="cn.Interceptor.LoginInterceptor"/>
+			<interceptor-stack name="MyStack">
+				<interceptor-ref name="loginInterceptor">
+					<param name="excludeMethods">login,register,ajax,yanzhengma</param>
+				</interceptor-ref>
+				<interceptor-ref name="defaultStack"/>
+			</interceptor-stack>
+		</interceptors>
+		<default-interceptor-ref name="MyStack"/>
+		<global-results>
+			<result name="login" type="redirect">/login.jsp</result>
+		</global-results>	
+		<!-- 添加收藏 -->
+		<action name="admincollect" class="cn.action.CollectAction" method="addCollect">
+			<result type="redirect">admindetails.action?id=${id}</result>
+		</action>
+		<action name="clientscollect" class="cn.action.CollectAction" method="addCollect">
+			<result type="redirect">clientsdetails.action?id=${id}</result>
+		</action>
+		<action name="collect" class="cn.action.CollectAction" method="addCollect">
+			<result type="redirect">merchantsdetails.action?id=${id}</result>
+		</action>
+		<!-- 查询收藏目录 -->
+		<action name="selectadminCollect" class="cn.action.CollectAction" method="selectCollect">
+			<result>/admin/collect.jsp</result>
+		</action>
+		<action name="selectclientsCollect" class="cn.action.CollectAction" method="selectMyCollect">
+			<result>/clients/collect.jsp</result>
+		</action>
+		<action name="selectCollect" class="cn.action.CollectAction" method="selectMyCollect">
+			<result>/merchants/collect.jsp</result>
+		</action>
+		<!-- 删除收藏 -->
+		<action name="deleteadminCollect" class="cn.action.CollectAction" method="deleteCollect">
+			<result type="redirect">selectadminCollect.action</result>
+		</action>
+		<action name="deleteclientsCollect" class="cn.action.CollectAction" method="deleteCollect">
+			<result type="redirect">selectclientsCollect.action?id=${id}</result>
+		</action>
+		<action name="deleteCollect" class="cn.action.CollectAction" method="deleteCollect">
+			<result type="redirect">selectCollect.action?id=${id}</result>
+		</action>
+	</package>
+</struts>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.dao.TypeDao">
+   <resultMap type="cn.entity.Type" id="TypeMap">
+		<id column="id" property="id"/>
+		<result column="name" property="name"/>
+		<result column="typename" property="typename"/>
+		<result column="introduction" property="introduction"/>
+		<result column="imageFileName" property="imageFileName"/>
+		<result column="date" property="date"/>
+		<result column="number" property="number"/>
+		<result column="price" property="price"/>
+		<result column="us_id" property="us_id"/>
+		<association property="user" javaType="cn.entity.User">
+			<id column="usid" property="id"/>
+			<result column="usname" property="name"/>
+			<result column="email" property="email"/>
+			<result column="phone" property="phone"/>
+		</association>
+	</resultMap>
+	<!--查询所有商品  -->
+	<select id="selectTypes" resultMap="TypeMap">
+	SELECT tb_type.*,tb_users.id AS usid,tb_users.name as usname,tb_users.email,tb_users.phone,price
+	 FROM tb_type LEFT JOIN tb_users ON tb_type.us_id=tb_users.id ORDER BY DATE DESC
+	 </select>
+	 <!-- 根据商家id查询自己所有的商品 -->
+	 <select id="selectMerchantsTypes" parameterType="int" resultMap="TypeMap">
+	SELECT tb_type.*,tb_users.id AS usid,tb_users.name as usname,tb_users.email,tb_users.phone
+	 FROM tb_type LEFT JOIN tb_users ON tb_type.us_id=tb_users.id WHERE us_id= #{us_id} ORDER BY DATE DESC
+	 </select>
+	 <!-- 根据商品id查询商品信息和店铺信息 -->
+	 <select id="selectUserType" parameterType="int" resultMap="TypeMap">
+	SELECT tb_type.*,tb_users.id AS usid,tb_users.name as usname,tb_users.email,tb_users.phone
+	 FROM tb_type LEFT JOIN tb_users ON tb_type.us_id=tb_users.id WHERE tb_type.id= #{tb_type.id}
+	 </select>
+	 <!-- 添加商品，插入商品信息 -->
+	<insert id="addType" parameterType="Type">
+	<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+		SELECT LAST_INSERT_ID()
+	</selectKey>
+	   insert into tb_type values(#{id},#{typename},#{name},#{introduction},#{imageFileName},#{date},#{number},#{price},#{us_id})
+    </insert>
+    <!-- 根据商品id删除商品 -->
+	<delete id="deleteType" parameterType="int">
+		delete  from tb_type where id = #{id}
+	</delete>
+	<!-- 根据商品id查询商品信息-->
+	<select id="selectType" parameterType="int" resultType="Type">
+		select * from tb_type where id = #{id}
+	</select>
+	<!--修改商品的信息 -->
+	<update id="updateType" parameterType="Type">
+		update tb_type set typename = #{typename},
+		name = #{name},
+		introduction = #{introduction},
+		imageFileName = #{imageFileName},
+		number = #{number},
+		price = #{price}
+		where id = #{id} 
+	</update>
+	<!-- 入库，添加相应的商品数量 -->
+	<update id="addnumber" parameterType="Order">
+		update tb_type set
+		number = number + #{number}
+		where id = #{ty_id} 
+	</update>	
+	<!--出库，减少相应的商品数量  -->
+	<update id="diminishednumber" parameterType="Order">
+		update tb_type set
+		number = number-#{number}
+		where id = #{ty_id} 
+	</update>	
+	<!-- 根据输入的字符串对商品名称，类型和简介进行模糊查询-->
+	<select id="search" parameterType="Type" resultType="Type">
+	SELECT * FROM tb_type WHERE NAME LIKE "%"#{name}"%" OR  typename LIKE "%"#{name}"%" OR  introduction LIKE "%"#{name}"%"
+	</select>
+</mapper>

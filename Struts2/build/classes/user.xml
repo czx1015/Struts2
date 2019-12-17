@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+    <!-- 用户包 -->
+    <!-- 定义全局资源文件名叫validation，放在classpath根目录下 -->
+    <constant name="struts.custom.il8n.resources" value="validation"></constant>
+	<package name="user" namespace="/" extends="struts-default">	
+		<interceptors>
+			<interceptor name="loginInterceptor" class="cn.Interceptor.LoginInterceptor"/>
+			<interceptor-stack name="MyStack">
+				<interceptor-ref name="loginInterceptor">
+					<param name="excludeMethods">login,register,ajax,yanzhengma</param>
+				</interceptor-ref>
+				<interceptor-ref name="defaultStack"/>
+			</interceptor-stack>
+		</interceptors>
+		<default-interceptor-ref name="MyStack"/>
+		<global-results>
+			<result name="login" type="redirect">/login.jsp</result>
+		</global-results>	
+		<!-- 验证码 -->
+		<action name="yanzhengma" class="cn.action.UserAction" method="yanzhengma"/>
+		<!--ajax异步校验  -->
+		<action name="ajax" class="cn.action.UserAction" method="ajax">
+		</action>
+		<!-- 登录，根据不同的权限跳转到不同的action -->
+		<action name="login" class="cn.action.UserAction" method="login">
+			<result name="admin" type="redirect">adminIndex.action</result>
+			<result name="clients" type="redirect">clientsIndex.action</result>
+			<result name="merchants" type="redirect">merchantsIndex.action</result>
+			<result name="error" type="redirect">/login.jsp</result>
+		</action>
+		<!-- 登录后根据不同的用户类型跳转到不同的页面 -->
+		<action name="adminIndex" class="cn.action.TypeAction" method="selectTypes">
+			<result>/admin/index.jsp</result>
+		</action>
+		<action name="clientsIndex" class="cn.action.TypeAction" method="selectTypes">
+			<result>/clients/index.jsp</result>
+		</action>
+		<action name="merchantsIndex" class="cn.action.TypeAction" method="selectTypes">
+			<result>/merchants/index.jsp</result>
+		</action>
+		<!-- （仅限管理员），跳抓到用户添加页 -->
+		<action name="add" class="cn.action.UserAction" method="add">
+			<result>/admin/add.jsp</result>
+		</action>
+		<!-- 添加一个用户信息，添加成功后跳转到用户管理页 -->
+		<action name="addUser" class="cn.action.UserAction" method="register">
+			<result name="register" type="redirect">/admin/add.jsp</result>
+			<result name="login" type="redirect">selectUsers.action</result>
+		</action>
+		<!-- 注册 -->
+		<action name="register" class="cn.action.UserAction" method="register">
+			<result name="register" type="redirect">/register.jsp</result>
+			<result name="login" type="redirect">/login.jsp</result>
+		</action>
+		<!-- 查询除管理员外的所有的用户信息，用户的增删改查，跳转到用户的管理页 -->
+		<action name="selectUsers" class="cn.action.UserAction" method="selectUsers">
+			<result>/admin/user.jsp</result>
+		</action>
+		<!-- 根据id删除用户，跳转到用户管理页 -->
+		<action name="deleteUser" class="cn.action.UserAction" method="deleteUser">
+			<result>/admin/user.jsp</result>
+		</action>
+		<!-- 根据id查询用户信息，跳转到用户信息修改页 -->
+		<action name="adminselectUser" class="cn.action.UserAction" method="selectUser">
+			<result>/admin/update.jsp</result>
+		</action>
+		<action name="adminMeselectUser" class="cn.action.UserAction" method="selectUser">
+			<result>/admin/updateme.jsp</result>
+		</action>
+		<action name="clientsselectUser" class="cn.action.UserAction" method="selectUser">
+			<result>/clients/update.jsp</result>
+		</action>
+		<action name="selectUser" class="cn.action.UserAction" method="selectUser">
+			<result>/merchants/update.jsp</result>
+		</action>
+		<!-- 根据用户id修改用户信息，返回到 -->
+		<action name="adminupdateUser" class="cn.action.UserAction" method="updateUser">
+			<result>/admin/update.jsp</result>
+		</action>
+		<action name="clientsupdateUser" class="cn.action.UserAction" method="updateUser">
+			<result>/clients/update.jsp</result>
+		</action>
+		<action name="updateUser" class="cn.action.UserAction" method="updateUser">
+			<result>/merchants/update.jsp</result>
+		</action>
+	</package>
+
+</struts>

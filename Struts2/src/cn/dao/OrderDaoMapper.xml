@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.dao.OrderDao">
+<resultMap type="cn.entity.Order" id="OrderMap">
+		<id column="id" property="id"/>
+		<result column="name" property="name"/>
+		<result column="phone" property="phone"/>
+		<result column="address" property="address"/>
+		<result column="ty_price" property="ty_price"/>
+		<result column="number" property="number"/>
+		<result column="totalPrice" property="totalPrice"/>
+		<result column="date" property="date"/>
+		<result column="ty_id" property="ty_id"/>
+		<result column="us_id" property="us_id"/>
+		<result column="tag" property="tag"/>
+		<result column="sumnumber" property="sum"/>
+		<association property="type" javaType="cn.entity.Type">
+			<id column="tyid" property="id"/>
+			<result column="typename" property="typename"/>
+			<result column="tyname" property="name"/>
+			<result column="introduction" property="introduction"/>
+			<result column="imageFileName" property="imageFileName"/>
+			<result column="date" property="date"/>
+			<result column="tynumber" property="number"/>
+			<result column="price" property="price"/>
+		</association>
+		<association property="user" javaType="cn.entity.User">
+			<id column="usid" property="id"/>
+			<result column="name" property="name"/>
+			<result column="email" property="email"/>
+			<result column="phone" property="phone"/>
+		</association>
+	</resultMap>
+	<!-- <select id="selectMerchantsOrders" parameterType="int" resultMap="OrderMap">
+	SELECT tb_order.*,tb_users.id AS usid,tb_users.name,tb_users.email,tb_users.phone
+	 FROM tb_order LEFT JOIN tb_users ON tb_order.us_id=tb_users.id WHERE us_id= #{us_id} ORDER BY DATE DESC
+	 </select> -->
+	 <!-- 根据商家id查询该商家店铺出入库情况 -->	 
+	 <select id="storerooms"  parameterType="int" resultMap="OrderMap">
+	SELECT tb_order.*,tb_type.id as tyid,tb_type.name as tyname,tb_type.typename,tb_type.introduction,
+	tb_type.number as tynumber,tb_type.imageFileName,tb_type.price 
+	FROM tb_order LEFT JOIN tb_type ON tb_order.ty_id=tb_type.id WHERE tb_type.us_id = #{tb_type.us_id} ORDER BY DATE DESC
+	</select>
+	<!-- 查询所有的商家的出入库情况 -->
+	<select id="adminstorerooms" resultMap="OrderMap">
+	SELECT tb_order.*,tb_type.id as tyid,tb_type.name as tyname,tb_type.typename,tb_type.introduction,
+	tb_type.number as tynumber,tb_type.imageFileName,tb_type.price 
+	FROM tb_order LEFT JOIN tb_type ON tb_order.ty_id=tb_type.id ORDER BY DATE DESC
+	</select>
+	<!-- 根据商家id对该商家出入库情况进行统计 -->
+	<select id="statistics"  parameterType="int" resultMap="OrderMap">
+	SELECT tb_order.ty_id,SUM(tb_order.totalPrice) as totalPrice,SUM(tb_order.number) as sumnumber,tb_type.number AS tynumber,tb_type.name 
+	AS tyname,tb_type.typename,tb_type.imageFileName,tb_type.price 
+	FROM tb_order LEFT JOIN tb_type ON tb_order.ty_id=tb_type.id WHERE tb_type.us_id = #{tb_type.us_id} GROUP BY tb_order.ty_id,tag
+	</select>
+	<!-- 对所有的商家出入库情况进行统计 -->
+	<select id="adminstatistics" resultMap="OrderMap">
+	SELECT tb_order.ty_id,tag,SUM(tb_order.number) as sumnumber,SUM(tb_order.totalPrice) as totalPrice,tb_type.number AS tynumber,tb_type.name 
+	AS tyname,tb_type.typename,tb_type.imageFileName,tb_type.price 
+	FROM tb_order LEFT JOIN tb_type ON tb_order.ty_id=tb_type.id GROUP BY tb_order.ty_id,tag
+	</select>
+	<!--根据用户id查询订单 -->
+	 <select id="selectTypeOrders"  parameterType="int" resultMap="OrderMap">
+	SELECT tb_order.*,tb_type.id as tyid,tb_type.name as tyname,tb_type.typename,tb_type.introduction,
+	tb_type.number as tynumber,tb_type.imageFileName,tb_type.price 
+	FROM tb_order LEFT JOIN tb_type ON tb_order.ty_id=tb_type.id WHERE tb_order.us_id = #{tb_order.us_id} OR me_id = #{me_id}
+	ORDER BY DATE DESC
+	</select>
+	<!-- 提交订单，并根据标签判断是出库还是入库-->
+	<insert id="submitOrder" parameterType="Order">
+		insert into tb_order values(#{id},#{name},#{phone},#{address},#{ty_price},#{number},#{totalPrice},#{date},#{ty_id},#{us_id},#{me_id},#{tag})
+	</insert>
+	<!--  查询所有的订单信息 //根据用户id查询订单  -->
+	<select id="selectOrders" resultMap="OrderMap">
+	SELECT tb_order.*,tb_type.id as tyid,tb_type.typename,tb_type.introduction,tb_type.imageFileName,tb_type.price 
+	FROM tb_order LEFT JOIN tb_type ON tb_order.ty_id=tb_type.id ORDER BY DATE DESC
+	</select>
+	<!-- //查询销售总金额 -->
+	<select id="tagprice" resultType="Order">
+	SELECT SUM(totalPrice) as totalPrice,me_id FROM tb_order WHERE tag = 0  GROUP BY me_id
+	</select>
+	<!--删除订单  -->
+	<delete id="deleteOrder" parameterType="Order">
+		delete  from tb_order where id = #{id}
+	</delete>
+</mapper>
